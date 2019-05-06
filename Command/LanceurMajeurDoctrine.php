@@ -37,11 +37,16 @@ class LanceurMajeurDoctrine
 		$exprSousDossiersEtFichiers = '(?:{[^/]*}/|)'.\MajeurListeurDossiers::ExprFichiers('update-', array('sql', 'php'));
 		$listeur = new \MajeurListeurDossiers($exprDossiers.'/'.$exprSousDossiersEtFichiers);
 
-		$joueur = new \MajeurJoueurPdo($bdd);
+		$joueur = new \MajeurJoueurPdo($bdd, array('#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité')));
 
 		$majeur = new \Majeur($silo, $listeur, $joueur);
 		
 		return $majeur->tourner();
+	}
+
+	public function nomTableEntité($corr)
+	{
+		return $this->em->getClassMetadata(substr($corr[0], 1))->table['name'];
 	}
 }
 
