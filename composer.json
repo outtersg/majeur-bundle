@@ -1,0 +1,25 @@
+{
+	"name": "gui/majeur-bundle",
+	"description": "Intégration Doctrine de gui/majeur",
+	"version": "1.0.x-dev",
+	"require":
+	{
+		"php": ">= 5.3.0",
+		"gui/majeur": "@dev"
+	},
+	"autoload":
+	{
+		"psr-4": { "Gui\\MajeurBundle\\": "" },
+		"exclude-from-classmap":
+		[
+			"/Tests/"
+		]
+	},
+	"repositories":
+	[
+		{
+			"type": "path",
+			"url": "../majeur"
+		}
+	]
+}
