@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class LanceurMajeurDoctrine
 {
-	public $préfixe = 'update-';
+	public $préfixe = 'UPDATE-';
 	
 	public function __construct(EntityManagerInterface $em, $paramétrage = array())
 	{
