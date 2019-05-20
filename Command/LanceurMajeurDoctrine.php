@@ -6,10 +6,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class LanceurMajeurDoctrine
 {
-	public function __construct(EntityManagerInterface $em, $nomTableVersions = 'versions')
+	public function __construct(EntityManagerInterface $em, $paramétrage = array())
 	{
 		$this->em = $em;
-		$this->nomTableVersions = $nomTableVersions;
+		$this->params = $paramétrage;
 		$this->dossiers = array
 		(
 			'vendor/{*/*}',
@@ -29,7 +29,7 @@ class LanceurMajeurDoctrine
 		require_once $cMajeur.'MajeurListeurDossiers.php';
 		require_once $cMajeur.'MajeurJoueurPdo.php';
 		
-		$silo = new \MajeurSiloPdo($bdd, $this->nomTableVersions);
+		$silo = new \MajeurSiloPdo($bdd, isset($this->params['silo']) ? $this->params['silo'] : null);
 
 		$racine = $this->racine;
 		$dossiersFouille = array_map(function($x) use($racine) { return (substr($x, 0, 1) == '/' ? '' : $racine.'/').$x.'/Resources/install'; }, $this->dossiers);
