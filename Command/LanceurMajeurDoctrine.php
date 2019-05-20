@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class LanceurMajeurDoctrine
 {
+	public $préfixe = 'update-';
+	
 	public function __construct(EntityManagerInterface $em, $paramétrage = array())
 	{
 		$this->em = $em;
@@ -34,7 +36,8 @@ class LanceurMajeurDoctrine
 		$racine = $this->racine;
 		$dossiersFouille = array_map(function($x) use($racine) { return (substr($x, 0, 1) == '/' ? '' : $racine.'/').$x.'/Resources/install'; }, $this->dossiers);
 		$exprDossiers = \GlobExpr::globEnExpr($dossiersFouille);
-		$exprSousDossiersEtFichiers = '(?:{[^/]*}/|)'.\MajeurListeurDossiers::ExprFichiers('update-', array('sql', 'php'));
+		$préfixe = isset($this->params['listeur']['préfixe']) ? $this->params['listeur']['préfixe'] : $this->préfixe;
+		$exprSousDossiersEtFichiers = '(?:{[^/]*}/|)'.\MajeurListeurDossiers::ExprFichiers($préfixe, array('sql', 'php'));
 		$listeur = new \MajeurListeurDossiers($exprDossiers.'/'.$exprSousDossiersEtFichiers);
 		if(isset($this->params['listeur']))
 			foreach($this->params['listeur'] as $param => $val)
