@@ -36,6 +36,9 @@ class LanceurMajeurDoctrine
 		$exprDossiers = \GlobExpr::globEnExpr($dossiersFouille);
 		$exprSousDossiersEtFichiers = '(?:{[^/]*}/|)'.\MajeurListeurDossiers::ExprFichiers('update-', array('sql', 'php'));
 		$listeur = new \MajeurListeurDossiers($exprDossiers.'/'.$exprSousDossiersEtFichiers);
+		if(isset($this->params['listeur']))
+			foreach($this->params['listeur'] as $param => $val)
+				$listeur->$param = $val;
 
 		$joueur = new \MajeurJoueurPdo($bdd, array('#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité')));
 
