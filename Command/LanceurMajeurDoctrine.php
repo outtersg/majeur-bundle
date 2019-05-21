@@ -8,16 +8,37 @@ class LanceurMajeurDoctrine
 {
 	public $préfixe = 'UPDATE-';
 	
+	public $dossiers = array
+	(
+		'vendor/{*/*}' => 0,
+		'{src}' => 0,
+		'src' => array(1, 2),
+	);
+	
 	public function __construct(EntityManagerInterface $em, $paramétrage = array())
 	{
 		$this->em = $em;
 		$this->params = $paramétrage;
-		$this->dossiers = array
-		(
-			'vendor/{*/*}',
-			'{src}',
-		);
-		$this->racine = '.';
+	}
+	
+	public function chemins()
+	{
+		$racine = $this->racine;
+		
+		$installs = 'Resources/install';
+		
+		$préfixe = isset($this->params['listeur']['préfixe']) ? $this->params['listeur']['préfixe'] : $this->préfixe;
+		$fichiers = array($préfixe, array('php', 'sql'));
+		
+		$r = array();
+		$fExprNiveaux = '\MajeurListeurDossiers::ExprNiveaux';
+		foreach($this->dossiers as $dossier => $sousNiveaux)
+		{
+			$exprNiveaux = is_array($sousNiveaux) ? call_user_func_array($fExprNiveaux, $sousNiveaux) : $fExprNiveaux($sousNiveaux);
+			$r[] = array($racine, $dossier, $installs, $exprNiveaux, $fichiers);
+		}
+		
+		return $r;
 	}
 	
 	public function tourner()
@@ -32,22 +53,39 @@ class LanceurMajeurDoctrine
 		require_once $cMajeur.'MajeurJoueurPdo.php';
 		
 		$silo = new \MajeurSiloPdo($bdd, isset($this->params['silo']) ? $this->params['silo'] : null);
+		$listeur = new \MajeurListeurDossiers(array('chemins' => $this->chemins()));
+		$this->_configurer($listeur, 'listeur');
 
-		$racine = $this->racine;
-		$dossiersFouille = array_map(function($x) use($racine) { return (substr($x, 0, 1) == '/' ? '' : $racine.'/').$x.'/Resources/install'; }, $this->dossiers);
-		$exprDossiers = \GlobExpr::globEnExpr($dossiersFouille);
-		$préfixe = isset($this->params['listeur']['préfixe']) ? $this->params['listeur']['préfixe'] : $this->préfixe;
-		$exprSousDossiersEtFichiers = '(?:{[^/]*}/|)'.\MajeurListeurDossiers::ExprFichiers($préfixe, array('sql', 'php'));
-		$listeur = new \MajeurListeurDossiers($exprDossiers.'/'.$exprSousDossiersEtFichiers);
-		if(isset($this->params['listeur']))
-			foreach($this->params['listeur'] as $param => $val)
-				$listeur->$param = $val;
-
-		$joueur = new \MajeurJoueurPdo($bdd, array('#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité')));
+		$joueur = new \MajeurJoueurPdo($bdd);
+		$paramsJoueur = array
+		(
+			'+défs' => array
+			(
+				'#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité'),
+			),
+		);
+		$this->_configurer($joueur, 'joueur', $paramsJoueur);
 
 		$majeur = new \Majeur($silo, $listeur, $joueur);
 		
 		return $majeur->tourner();
+	}
+	
+	protected function _configurer($o, $section, $paramsParDéfaut = array())
+	{
+		$params = isset($this->params[$section]) ? $this->params[$section] : array();
+		$params += $paramsParDéfaut;
+		foreach($params as $param => $val)
+			if(substr($param, 0, 1) == '+')
+			{
+				if(isset($params[substr($param, 1)]))
+					$params[substr($param, 1)] += $val;
+				else
+					$params[substr($param, 1)] = $val;
+				unset($params[$param]);
+			}
+		foreach($params as $param => $val)
+			$o->$param = $val;
 	}
 
 	public function nomTableEntité($corr)
