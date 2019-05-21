@@ -62,6 +62,7 @@ class LanceurMajeurDoctrine
 			'+défs' => array
 			(
 				'#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité'),
+				':env' => getenv('APP_ENV'),
 			),
 		);
 		$this->_configurer($joueur, 'joueur', $paramsJoueur);
