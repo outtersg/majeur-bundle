@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class LanceurMajeurDoctrine
 {
+	public $sousDossiers = 'Resources/install';
 	public $préfixe = 'UPDATE-';
 	
 	public $dossiers = array
@@ -25,8 +26,6 @@ class LanceurMajeurDoctrine
 	{
 		$racine = $this->racine;
 		
-		$installs = 'Resources/install';
-		
 		$préfixe = isset($this->params['listeur']['préfixe']) ? $this->params['listeur']['préfixe'] : $this->préfixe;
 		$fichiers = array($préfixe, array('php', 'sql'));
 		
@@ -35,7 +34,7 @@ class LanceurMajeurDoctrine
 		foreach($this->dossiers as $dossier => $sousNiveaux)
 		{
 			$exprNiveaux = is_array($sousNiveaux) ? call_user_func_array($fExprNiveaux, $sousNiveaux) : $fExprNiveaux($sousNiveaux);
-			$r[] = array($racine, $dossier, $installs, $exprNiveaux, $fichiers);
+			$r[] = array($racine, $dossier, $this->sousDossiers, $exprNiveaux, $fichiers);
 		}
 		
 		return $r;
