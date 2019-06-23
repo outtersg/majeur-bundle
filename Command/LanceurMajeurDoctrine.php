@@ -30,7 +30,7 @@ class LanceurMajeurDoctrine
 		$fichiers = array($préfixe, array('php', 'sql'));
 		
 		$r = array();
-		$fExprNiveaux = '\MajeurListeurDossiers::ExprNiveaux';
+		$fExprNiveaux = array('\MajeurListeurDossiers', 'ExprNiveaux');
 		foreach($this->dossiers as $dossier => $sousNiveaux)
 		{
 			$exprNiveaux = is_array($sousNiveaux) ? call_user_func_array($fExprNiveaux, $sousNiveaux) : $fExprNiveaux($sousNiveaux);
