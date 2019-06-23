@@ -73,7 +73,7 @@ class LanceurMajeurDoctrine
 	
 	protected function _configurer($o, $section, $paramsParDéfaut = array())
 	{
-		$params = isset($this->params[$section]) ? $this->params[$section] : array();
+		$params = is_string($section) ? (isset($this->params[$section]) ? $this->params[$section] : array()) : $section;
 		$params += $paramsParDéfaut;
 		foreach($params as $param => $val)
 			if(substr($param, 0, 1) == '+')
