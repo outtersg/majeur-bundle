@@ -66,9 +66,9 @@ class LanceurMajeurDoctrine
 		);
 		$this->_configurer($joueur, 'joueur', $paramsJoueur);
 
-		$majeur = new \Majeur($silo, $listeur, $joueur);
+		$this->majeur = new \Majeur($silo, $listeur, $joueur);
 		
-		return $majeur->tourner();
+		return $this->majeur->tourner();
 	}
 	
 	protected function _configurer($o, $section, $paramsParDéfaut = array())
