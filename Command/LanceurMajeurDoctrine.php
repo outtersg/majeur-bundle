@@ -109,8 +109,11 @@ class LanceurMajeurDoctrine
 			$joueur = $this->joueur($cMajeur, $typeJoueurRéel, $paramsJoueur);
 			$joueurs[$typeJoueur] = $joueur;
 		}
+		$listeurs = array($listeur);
+		if(isset($this->params['listeurs']))
+			$listeurs = array_merge($listeurs, $this->params['listeurs']);
 
-		$this->majeur = new \Majeur($silo, $listeur, $joueurs);
+		$this->majeur = new \Majeur($silo, $listeurs, $joueurs);
 		
 		return $this->majeur->tourner();
 	}
