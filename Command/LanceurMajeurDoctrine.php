@@ -40,6 +40,46 @@ class LanceurMajeurDoctrine
 		return $r;
 	}
 	
+	public function configJoueur($type)
+	{
+		switch($type)
+		{
+			case 'pdo':
+				return array
+				(
+					array
+					(
+						$this->em->getConnection()->getWrappedConnection(),
+					),
+					array
+					(
+						'+défs' => array
+						(
+							'#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité'),
+							':env' => getenv('APP_ENV'),
+						),
+					)
+				);
+		}
+	}
+	
+	public function joueur($cMajeur, $type, $params)
+	{
+		$config = $this->configJoueur($type);
+		$config || $config = array();
+		$config += array(array(), array());
+		
+		$classe = 'MajeurJoueur'.ucfirst($type);
+		require_once $cMajeur.$classe.'.php';
+		$classe = '\\'.$classe;
+		$pouleÀJoueur = new \ReflectionClass($classe);
+		$joueur = $pouleÀJoueur->newInstanceArgs($config[0]);
+		
+		$this->_configurer($joueur, $params, $config[1]);
+		
+		return $joueur;
+	}
+	
 	public function tourner()
 	{
 		$bdd = $this->em->getConnection()->getWrappedConnection();
@@ -49,24 +89,28 @@ class LanceurMajeurDoctrine
 		require_once $cMajeur.'Majeur.php';
 		require_once $cMajeur.'MajeurSiloPdo.php';
 		require_once $cMajeur.'MajeurListeurDossiers.php';
-		require_once $cMajeur.'MajeurJoueurPdo.php';
 		
 		$silo = new \MajeurSiloPdo($bdd, isset($this->params['silo']) ? $this->params['silo'] : null);
 		$listeur = new \MajeurListeurDossiers(array('chemins' => $this->chemins()));
 		$this->_configurer($listeur, 'listeur');
+		
+		// Si un seul joueur est demandé, c'est celui pour le SQL.
+		if(isset($this->params['joueur']) && !isset($this->params['joueurs']))
+			$this->params['joueurs'] = array('sql' => $this->params['joueur']);
+		
+		$joueurs = array();
+		foreach($this->params['joueurs'] as $typeJoueur => $paramsJoueur)
+		{
+			$typeJoueurRéel = $typeJoueur;
+			switch($typeJoueur)
+			{
+				case 'sql': $typeJoueurRéel = 'pdo'; break;
+			}
+			$joueur = $this->joueur($cMajeur, $typeJoueurRéel, $paramsJoueur);
+			$joueurs[$typeJoueur] = $joueur;
+		}
 
-		$joueur = new \MajeurJoueurPdo($bdd);
-		$paramsJoueur = array
-		(
-			'+défs' => array
-			(
-				'#@\\\\?(?:[A-Z][a-zA-Z0-9]+\\\\)+[A-Z][a-zA-Z0-9]+#' => array($this, 'nomTableEntité'),
-				':env' => getenv('APP_ENV'),
-			),
-		);
-		$this->_configurer($joueur, 'joueur', $paramsJoueur);
-
-		$this->majeur = new \Majeur($silo, $listeur, $joueur);
+		$this->majeur = new \Majeur($silo, $listeur, $joueurs);
 		
 		return $this->majeur->tourner();
 	}
