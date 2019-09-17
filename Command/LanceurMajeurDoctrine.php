@@ -115,6 +115,13 @@ class LanceurMajeurDoctrine
 
 		$this->majeur = new \Majeur($silo, $listeurs, $joueurs);
 		
+		if(isset($this->params['diag']))
+		{
+			require_once $cMajeur.'MajeurInfo.php';
+			$mi = new \MajeurInfo($this->majeur);
+			$mi->vers($this->params['diag']);
+		}
+		
 		return $this->majeur->tourner();
 	}
 	
