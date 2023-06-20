@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services">
+	<services>
+		<service id="Gui\MajeurBundle\Migrations\MigrationsRepository" class="Gui\MajeurBundle\Migrations\MigrationsRepository">
+			<argument type="service" id="doctrine.migrations.dependency_factory"/>
+		</service>
+		<service id="Gui\MajeurBundle\Migrations\GlobFinder" class="Gui\MajeurBundle\Migrations\GlobFinder"/>
+	</services>
+</container>
