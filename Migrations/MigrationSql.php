@@ -17,10 +17,16 @@ class MigrationSql extends AbstractMigration
 	/**
 	 * @throws MigrationException|DBALException
 	 */
-	 public function up(Schema $schema): void
-	 {
-	 	throw new \Exception('À IMPLÉMENTER');
-	 }
+	public function up(Schema $schema): void
+	{
+		$joueur = new Sqleur($this, $this->connection->getWrappedConnection(), []);
+		$joueur->sqleur->decoupeFichier($this->chemin);
+	}
+	
+	public function sortir($sql)
+	{
+		$this->addSql($sql);
+	}
 }
 
 ?>
