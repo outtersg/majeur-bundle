@@ -20,3 +20,13 @@ doctrine_migrations:
 		'Doctrine\Migrations\MigrationsRepository':     'Gui\MajeurBundle\Migrations\MigrationsRepository'
 		[…]
 ```
+
+Le moteur SQL sous-jacent est par défaut générique;
+il est possible de l'enrichir de "définitions" (éléments qui seront remplacés par leur valeur dans le SQL)
+en invoquant la méthode `MigrationSql.avecDéfs()` depuis votre `MigrationFactory` personnalisée
+(vous aurez alors ajouté au `doctrine_migrations.yaml` ci-dessus une clé `doctrine_migrations: services: Doctrine\Migrations\Version\MigrationFactory: xxx`)
+Ex.:
+```php
+if($migration instanceof \Gui\MajeurBundle\Migrations\MigrationSql)
+	$migration->avecDéfs([ ':env' => 'prod' ]);
+```
