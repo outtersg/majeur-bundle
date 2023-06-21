@@ -9,9 +9,16 @@ class MigrationSql extends AbstractMigration
 {
 	public $chemin;
 	
+	protected $_défs = [];
+	
 	public function chemin($chemin)
 	{
 		$this->chemin = $chemin;
+	}
+	
+	public function avecDéfs($défs)
+	{
+		$this->_défs = $défs;
 	}
 	
 	/**
@@ -19,7 +26,7 @@ class MigrationSql extends AbstractMigration
 	 */
 	public function up(Schema $schema): void
 	{
-		$joueur = new MajeurJoueurPdo($this, $this->connection->getWrappedConnection(), []);
+		$joueur = new MajeurJoueurPdo($this, $this->connection->getWrappedConnection(), $this->_défs);
 		$joueur->sqleur->decoupeFichier($this->chemin);
 	}
 	
