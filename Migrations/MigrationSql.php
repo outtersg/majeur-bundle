@@ -19,7 +19,7 @@ class MigrationSql extends AbstractMigration
 	 */
 	public function up(Schema $schema): void
 	{
-		$joueur = new Sqleur($this, $this->connection->getWrappedConnection(), []);
+		$joueur = new MajeurJoueurPdo($this, $this->connection->getWrappedConnection(), []);
 		$joueur->sqleur->decoupeFichier($this->chemin);
 	}
 	

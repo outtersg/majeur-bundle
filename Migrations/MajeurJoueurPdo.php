@@ -25,12 +25,13 @@ namespace Gui\MajeurBundle\Migrations;
 
 require_once __DIR__.'/../../majeur/MajeurJoueurPdo.php';
 
-class Sqleur extends \MajeurJoueurPdo
+class MajeurJoueurPdo extends \MajeurJoueurPdo
 {
 	public function __construct($migrateur, $bdd, $défs = [])
 	{
 		$this->migrateur = $migrateur;
 		parent::__construct($bdd, $défs);
+		$this->init();
 		$this->_sqleur->_sortie = [ $this, 'sortir' ];
 	}
 	
