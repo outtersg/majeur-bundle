@@ -46,6 +46,26 @@ class MajeurJoueurPdo extends \MajeurJoueurPdo
 		$rés->setFetchMode(\PDO::FETCH_ASSOC);
 		return $rés;
 	}
+	
+	public function bdd()
+	{
+		$bdd = $this->bdd;
+		$accesseurs = [ 'getNativeConnection', 'getWrappedConnection', null ];
+		while(true)
+		{
+			foreach($accesseurs as $accesseur)
+			{
+				if(!isset($accesseur))
+					break 2;
+				if(method_exists($bdd, $accesseur))
+				{
+					$bdd = $bdd->$accesseur();
+					break;
+				}
+			}
+		}
+		return $bdd;
+	}
 }
 
 ?>
