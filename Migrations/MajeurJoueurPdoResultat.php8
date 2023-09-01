@@ -1,0 +1,18 @@
+<?php
+
+namespace Gui\MajeurBundle\Migrations;
+
+class MajeurJoueurPdoRésultat extends _MajeurJoueurPdoRésultat
+{
+	public function setFetchMode(int $mode, mixed ...$args)
+	{
+		return $this->_setFetchMode($mode);
+	}
+	
+	public function fetchAll(int $mode = \PDO::FETCH_DEFAULT, mixed ...$args): array
+	{
+		return $this->_fetchAll($mode);
+	}
+}
+
+?>
