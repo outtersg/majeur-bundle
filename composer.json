@@ -5,7 +5,8 @@
 	"require":
 	{
 		"php": ">= 5.3.0",
-		"gui/majeur": ">= 1"
+		"gui/sqleur": ">= 1.8.230929",
+		"gui/majeur": ">= 1.1.230901"
 	},
 	"autoload":
 	{
