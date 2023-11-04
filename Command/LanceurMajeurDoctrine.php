@@ -4,6 +4,8 @@ namespace Gui\MajeurBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Gui\MajeurBundle\Migrations\MajeurJoueurPdo;
+
 class LanceurMajeurDoctrine
 {
 	public $sousDossiers = 'Resources/install';
@@ -49,7 +51,7 @@ class LanceurMajeurDoctrine
 				(
 					array
 					(
-						$this->em->getConnection()->getWrappedConnection(),
+						$this->bdd(),
 					),
 					array
 					(
@@ -61,6 +63,15 @@ class LanceurMajeurDoctrine
 					)
 				);
 		}
+	}
+	
+	public function bdd()
+	{
+		$bdd = $this->em->getConnection()->getWrappedConnection();
+		// Récupération de la BdD encapsulée par Doctrine en mode traces, via un MajeurJoueurPdo qui sait le faire.
+		// À FAIRE: sortir ça vers une fonction statique dédiée?
+		$joueurPdo = new MajeurJoueurPdo(null, $bdd);
+		return $joueurPdo->bdd();
 	}
 	
 	public function joueur($cMajeur, $type, $params)
@@ -82,15 +93,13 @@ class LanceurMajeurDoctrine
 	
 	public function tourner()
 	{
-		$bdd = $this->em->getConnection()->getWrappedConnection();
-
 		// Le Majeur n'utilise pas d'autoload.
 		$cMajeur = __DIR__.'/../../majeur/';
 		require_once $cMajeur.'Majeur.php';
 		require_once $cMajeur.'MajeurSiloPdo.php';
 		require_once $cMajeur.'MajeurListeurDossiers.php';
 		
-		$silo = new \MajeurSiloPdo($bdd, isset($this->params['silo']) ? $this->params['silo'] : null);
+		$silo = new \MajeurSiloPdo($this->bdd(), isset($this->params['silo']) ? $this->params['silo'] : null);
 		$listeur = new \MajeurListeurDossiers(array('chemins' => $this->chemins()));
 		$this->_configurer($listeur, 'listeur');
 		
