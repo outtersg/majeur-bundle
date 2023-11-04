@@ -77,6 +77,8 @@ class MajeurJoueurPdo extends \MajeurJoueurPdo
 		}
 		return $bdd;
 	}
+	
+	public $migrateur;
 }
 
 ?>
