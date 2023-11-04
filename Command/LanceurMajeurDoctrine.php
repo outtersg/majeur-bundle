@@ -146,6 +146,11 @@ class LanceurMajeurDoctrine
 	{
 		return $this->em->getClassMetadata(substr($corr[0], 1))->table['name'];
 	}
+	
+	public $racine;
+	public $params;
+	public $em;
+	public $majeur;
 }
 
 ?>
