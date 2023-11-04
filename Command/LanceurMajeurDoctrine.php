@@ -36,7 +36,7 @@ class LanceurMajeurDoctrine
 		foreach($this->dossiers as $dossier => $sousNiveaux)
 		{
 			$exprNiveaux = is_array($sousNiveaux) ? call_user_func_array($fExprNiveaux, $sousNiveaux) : $fExprNiveaux($sousNiveaux);
-			$r[] = array($racine, $dossier, $this->sousDossiers, $exprNiveaux, $fichiers);
+			$r[] = array_filter(array($racine, $dossier, $this->sousDossiers, $exprNiveaux, $fichiers), function($x) { return isset($x); });
 		}
 		
 		return $r;
